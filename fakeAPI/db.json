@@ -1,0 +1,22 @@
+{
+  "users": [
+    {
+      "name": "Reza Haris Alfikri",
+      "email": "rezaharis32@gmail.com",
+      "role": "Mobile Developer",
+      "id": 1
+    },
+    {
+      "name": "Jonathan",
+      "email": "jonlenon@gmail.com",
+      "role": "Backend Developer",
+      "id": 2
+    },
+    {
+      "name": "Mandalika",
+      "email": "mandalik@gmail.com",
+      "role": "UI Designer",
+      "id": 3
+    }
+  ]
+}
