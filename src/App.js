@@ -12,6 +12,8 @@ import CallAPIVanilla from './pages/CallAPIVanilla';
 import CallAPIAxios from './pages/CallAPIAxios';
 import LocalAPI from './pages/LocalAPI';
 import Notification from './pages/Notification';
+import {Provider} from 'react-redux';
+import {store} from './redux';
 
 function App() {
   const [isShow, SetIsShow] = useState(true);
@@ -22,22 +24,24 @@ function App() {
   // }, []);
 
   return (
-    <View>
-      <ScrollView>
-        {/* <LatihanComponent /> */}
-        {/* <StylingComponent /> */}
-        {/* {isShow && <Flexbox />} */}
-        {/* <Position /> */}
-        {/* <PropsDinamis /> */}
-        {/* <StateDinamis /> */}
-        {/* <Communication /> */}
-        {/* <BasicJavaScript /> */}
-        {/* <CallAPIVanilla /> */}
-        {/* <CallAPIAxios /> */}
-        {/* <LocalAPI /> */}
-        <Notification />
-      </ScrollView>
-    </View>
+    <Provider store={store}>
+      <View>
+        <ScrollView>
+          {/* <LatihanComponent /> */}
+          {/* <StylingComponent /> */}
+          {/* {isShow && <Flexbox />} */}
+          {/* <Position /> */}
+          {/* <PropsDinamis /> */}
+          {/* <StateDinamis /> */}
+          {/* <Communication /> */}
+          {/* <BasicJavaScript /> */}
+          {/* <CallAPIVanilla /> */}
+          {/* <CallAPIAxios /> */}
+          <LocalAPI />
+          {/* <Notification /> */}
+        </ScrollView>
+      </View>
+    </Provider>
   );
 }
 

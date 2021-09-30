@@ -9,6 +9,8 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
+import {useDispatch, useSelector} from 'react-redux';
+import {setDataAPI, setForm} from '../../redux';
 
 function ItemUser({namaUser, emailUser, roleUser, onPress, deleteUser}) {
   return (
@@ -34,110 +36,116 @@ function ItemUser({namaUser, emailUser, roleUser, onPress, deleteUser}) {
 }
 
 function LocalAPI() {
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
-  const [role, setRole] = useState('');
+  const {form} = useSelector(state => state.crudReducer);
+  const {title} = useSelector(state => state.crudReducer);
+  const dispatch = useDispatch();
   const [users, setUsers] = useState([]);
   const [btn, setBtn] = useState('Submit Data');
   const [selectedUser, setSelectedUser] = useState({});
 
   useEffect(() => {
-    getData();
+    // getData();
+    dispatch(setDataAPI());
   }, []);
 
   function submitUser() {
-    const dataUser = {
-      name,
-      email,
-      role,
-    };
-
-    if (name == '') {
+    if (form.name == '') {
       alert('Please Enter your name');
       return;
-    } else if (email == '') {
+    } else if (form.email == '') {
       alert('Please Enter your email');
       return;
-    } else if (role == '') {
+    } else if (form.role == '') {
       alert('Please Enter your role');
       return;
     }
 
     if (btn == 'Submit Data') {
-      axios.post('http://10.0.2.2:3004/users', dataUser).then(response => {
-        console.log('result submit data: ', response);
-        setName('');
-        setEmail('');
-        setRole('');
-        getData();
-      });
+      console.log('reducer result: ', form);
+
+      axios
+        .post('http://10.0.2.2:3004/users', form)
+        .then(response => {
+          console.log('result submit data: ', response);
+          dispatch({type: 'CLEAR_FORM'});
+          // getData();
+        })
+        .catch(error => console.log(error));
     } else {
       axios
-        .put(`http://10.0.2.2:3004/users/${selectedUser.id}`, dataUser)
+        .put(`http://10.0.2.2:3004/users/${selectedUser.id}`, form)
         .then(response => {
           console.log('result update data: ', response);
-          setName('');
-          setEmail('');
-          setRole('');
-          getData();
+          dispatch({type: 'CLEAR_FORM'});
+          // getData();
           setBtn('Submit Data');
         });
     }
   }
 
-  function getData() {
-    axios.get('http://10.0.2.2:3004/users').then(result => {
-      console.log('result get data: ', result);
-      setUsers(result.data);
-    });
-  }
+  // function getData() {
+  //   axios
+  //     .get('http://10.0.2.2:3004/users')
+  //     .then(result => {
+  //       console.log('result get: ', result.data);
+  //       setUsers(result.data);
+  //     })
+  //     .catch(error => console.log('error get data: ', error));
+  // }
 
   function deleteData(item) {
     axios.delete(`http://10.0.2.2:3004/users/${item.id}`).then(result => {
       console.log('result delete data: ', result);
-      getData();
+      // getData();
     });
   }
 
   function selectItem(item) {
-    setName(item.name);
-    setEmail(item.email);
-    setRole(item.role);
+    onInputChange(item.id, 'id');
+    onInputChange(item.name, 'name');
+    onInputChange(item.email, 'email');
+    onInputChange(item.role, 'role');
+
+    console.log('result select: ', item);
 
     setSelectedUser(item);
     setBtn('Update Data');
   }
 
+  function onInputChange(value, input) {
+    dispatch(setForm(input, value));
+  }
+
   return (
     <View style={styles.mainContainer}>
-      <Text style={styles.title}>CRUD Local API Dengan JSON Server</Text>
+      <Text style={styles.title}>{title}</Text>
       <TextInput
         style={styles.borderForm}
         placeholder={'Masukkan nama anda'}
-        value={name}
+        value={form.name}
         onChangeText={value => {
-          setName(value);
+          onInputChange(value, 'name');
         }}
       />
       <TextInput
         style={styles.borderForm}
         placeholder={'Masukkan email anda'}
-        value={email}
+        value={form.email}
         onChangeText={value => {
-          setEmail(value);
+          onInputChange(value, 'email');
         }}
       />
       <TextInput
         style={styles.borderForm}
         placeholder={'Masukkan role anda'}
-        value={role}
+        value={form.role}
         onChangeText={value => {
-          setRole(value);
+          onInputChange(value, 'role');
         }}
       />
       <Button title={btn} onPress={submitUser} />
       <View style={styles.line} />
-      {users.map(listUsers => {
+      {dispatch(setDataAPI()).map(listUsers => {
         return (
           <ItemUser
             key={listUsers.id}
